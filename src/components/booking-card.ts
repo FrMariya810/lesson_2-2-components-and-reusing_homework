@@ -1,4 +1,4 @@
-import type { Booking } from '../models/booking'
+import type { Booking, BookingStatusRequest } from '../models/booking'
 
 // Заготовка компонента. Рабочие обычные карточки находятся в legacy-card.ts.
 export class BookingCard extends HTMLElement {
@@ -23,6 +23,7 @@ export class BookingCard extends HTMLElement {
     `
     const article = document.createElement('article')
     this.button.type = 'button'
+    this.button.addEventListener('click', this.onAction)
     article.append(this.nameText, this.seatsText, this.sourceText, this.statusText, this.button)
     // А1: создайте открытый shadow root, поместите в него style и article.
     const shadow = this.attachShadow({ mode: 'open' })
@@ -68,6 +69,15 @@ export class BookingCard extends HTMLElement {
     if (!this.current) return
     // А3: запросите следующий статус публичным событием.
     // Подтверждённая заявка тоже интерактивна: здесь нет запрета confirmed.
+    const detail: BookingStatusRequest = {
+      id: this.current.id,
+      nextStatus: this.current.status === 'new' ? 'confirmed' : 'new'
+    }
+
+    this.dispatchEvent(new CustomEvent('booking-status-request', {
+      detail: detail,
+      bubbles: true
+    }))
   }
 
   connectedCallback() {
