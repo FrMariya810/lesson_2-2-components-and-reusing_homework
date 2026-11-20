@@ -23,7 +23,6 @@ export class BookingCard extends HTMLElement {
     `
     const article = document.createElement('article')
     this.button.type = 'button'
-    this.button.addEventListener('click', this.onAction)
     article.append(this.nameText, this.seatsText, this.sourceText, this.statusText, this.button)
     // А1: создайте открытый shadow root, поместите в него style и article.
     const shadow = this.attachShadow({ mode: 'open' })
@@ -82,10 +81,12 @@ export class BookingCard extends HTMLElement {
 
   connectedCallback() {
     // А4: подключите обработчик внутренней кнопки.
+    this.button.addEventListener('click', this.onAction)
   }
 
   disconnectedCallback() {
     // А4: снимите этот же обработчик.
+    this.button.removeEventListener('click', this.onAction)
   }
 }
 
